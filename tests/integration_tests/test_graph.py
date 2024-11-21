@@ -5,7 +5,7 @@ import pytest
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.store.memory import InMemoryStore
 
-from memory_agent.graph import builder
+from case_agent.graph import builder
 
 
 @pytest.mark.asyncio
