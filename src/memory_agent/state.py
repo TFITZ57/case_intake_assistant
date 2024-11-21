@@ -10,7 +10,7 @@ from langgraph.graph import add_messages
 from typing_extensions import Annotated
 import uuid
 
-class PersonalInfo(BaseModel):
+class UserData(BaseModel):
     """Personal information of the client including name, age, gender, date of birth, home address, email, and phone number"""
     first_name: str = Field('', description="First name of the client", examples=["John", "Jane"])
     last_name: str = Field('', description="Last name of the client", examples=["Doe", "Smith"])
@@ -111,12 +111,9 @@ class CaseData(BaseModel):
     Manages the overall state of a legal case, tracking all information from initial intake through case progression."""
     
     # Metadata fields
-    case_number: str = Field(default_factory=lambda: str(uuid.uuid4()), description="Unique identifier for the case")
     intake_date: date = Field(default_factory=date.today, description="Date when the case intake was started")
-    status: str = Field(default="intake_in_progress", description="Current status of the case")
     
     # Core information
-    personal_info: PersonalInfo = Field(default_factory=PersonalInfo, description="Personal information of the client including name, age, gender, date of birth, home address, email, and phone number")
     incident_details: IncidentDetails = Field(default_factory=IncidentDetails, description="Details about the incident including time, date, location, and description")
     witness_info: WitnessInfo = Field(default_factory=WitnessInfo, description="Information about any witnesses to the incident including their contact details and statement")
     injury_details: InjuryDetails = Field(default_factory=InjuryDetails, description="Details about the injury including symptoms, severity, duration, and impact")
@@ -128,13 +125,9 @@ class CaseData(BaseModel):
     damages_info: DamagesInfo = Field(default_factory=DamagesInfo, description="Financial impact of the incident including medical costs, property damage and lost wages")
     legal_info: LegalInfo = Field(default_factory=LegalInfo, description="Legal aspects of the case including prior representation, documents and settlement information")
 
-    class Config:
-        arbitrary_types_allowed = True
-
 def get_schema_json():
     # Get the full schema with descriptions and examples
     schema_json = CaseData.model_json_schema()
-
     # Remove unnecessary schema metadata to keep it clean
     if "title" in schema_json:
         del schema_json["title"]
@@ -149,10 +142,6 @@ class State:
     messages: Annotated[list[AnyMessage], add_messages] = field(default_factory=list)
     """The messages in the conversation."""
     
-    CaseData: type[CaseData] = field(default=CaseData)
-    """The CaseData class for schema reference"""
-
 __all__ = [
-    "State",
-    "CaseData",
+    "State"
 ]
